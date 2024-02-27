@@ -1,0 +1,62 @@
+{
+    "name": "wgsl-shader-support",
+    "description": "Support for the WebGPU Shading Language (WGSL) in VS Code",
+    "author": "blaumeise20",
+    "license": "MIT",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/blaumeise20/wgsl-shader-support"
+    },
+    "categories": [],
+    "keywords": [
+        "webgpu",
+        "wgsl",
+        "shader",
+        "language",
+        "syntax",
+        "highlighting",
+        "lsp",
+        "language-server-protocol"
+    ],
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "activationEvents": [],
+    "main": "./out/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "wgsl",
+                "extensions": [
+                    ".wgsl"
+                ],
+                "aliases": [
+                    "WebGPU Shading Language",
+                    "wgsl"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "wgsl",
+                "scopeName": "source.wgsl",
+                "path": "./syntaxes/wgsl.tmLanguage.json"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^18.14.6",
+        "@types/vscode": "^1.75.1",
+        "typescript": "^5.3.3"
+    }
+}

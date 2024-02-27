@@ -1,0 +1,339 @@
+{
+    "name": "WGSL",
+    "scopeName": "source.wgsl",
+    "patterns": [{ "include": "#root" }],
+    "repository": {
+        "root": {
+            "patterns": [
+                { "include": "#comment" },
+                { "include": "#literal" },
+                { "include": "#attribute" },
+                { "include": "#item" },
+                { "include": "#block" },
+                { "include": "#type-annotation" },
+                { "include": "#keyword" },
+                { "include": "#identifier" }
+            ]
+        },
+
+        "comment": {
+            "patterns": [
+                {
+                    "name": "comment.line.wgsl",
+                    "match": "(//).*",
+                    "captures": {
+                        "1": { "name": "punctuation.definition.comment.wgsl" }
+                    }
+                },
+                { "include": "#block_comment" }
+            ]
+        },
+        "block_comment": {
+            "name": "comment.block.wgsl",
+            "begin": "/\\*",
+            "end": "\\*/",
+            "captures": {
+                "0": { "name": "punctuation.definition.comment.wgsl" }
+            },
+            "patterns": [
+                { "include": "#block_comment" }
+            ]
+        },
+
+        "literal": {
+            "patterns": [
+                { "include": "#int_literal" },
+                { "include": "#float_literal" },
+                { "include": "#bool_literal" }
+            ]
+        },
+        "int_literal": {
+            "name": "constant.numeric.integer.wgsl",
+            "match": "\\b(?:0[xX][0-9a-fA-F]+|[0-9]+)[iu]?"
+        },
+        "float_literal": {
+            "patterns": [
+                {
+                    "name": "constant.numeric.float.wgsl",
+                    "match": "\\b[0-9]+[fh]|(?:(?:[0-9]*\\.[0-9]+|[0-9]+\\.[0-9]*)(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)[fh]?"
+                },
+                {
+                    "name": "constant.numeric.float.wgsl",
+                    "match": "\\b0[xX](?:(?:[0-9a-fA-F]*\\.[0-9a-fA-F]+|[0-9a-fA-F]+\\.[0-9a-fA-F]*)(?:[pP][+-]?[0-9]+[fh]?)?|[0-9a-fA-F]+[pP][+-]?[0-9]+[fh]?)"
+                }
+            ]
+        },
+        "bool_literal": {
+            "patterns": [
+                {
+                    "name": "constant.language.boolean.true.wgsl",
+                    "match": "\\btrue\\b"
+                },
+                {
+                    "name": "constant.language.boolean.false.wgsl",
+                    "match": "\\bfalse\\b"
+                }
+            ]
+        },
+
+        "attribute": {
+            "patterns": [
+                {
+                    "name": "meta.attribute.wgsl",
+                    "begin": "(@)\\s*(builtin)\\s*(\\()",
+                    "beginCaptures": {
+                        "1": { "name": "punctuation.definition.attribute.wgsl" },
+                        "2": { "name": "entity.name.function.wgsl" },
+                        "3": { "name": "punctuation.definition.attribute.begin.wgsl" }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.definition.attribute.end.wgsl" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "keyword.other.builtin.wgsl",
+                            "match": "\\b(?:(?:vertex|instance)_index|position|front_facing|frag_depth|local_invocation_(?:id|index)|global_invocation_id|workgroup_id|num_workgroups|sample_(?:index|mask))\\b"
+                        },
+                        { "include": "#root" }
+                    ]
+                },
+                {
+                    "name": "meta.attribute.wgsl",
+                    "begin": "(@)\\s*([_\\p{XID_Start}][\\p{XID_Continue}]*)\\s*(\\()",
+                    "beginCaptures": {
+                        "1": { "name": "punctuation.definition.attribute.wgsl" },
+                        "2": { "name": "entity.name.function.wgsl" },
+                        "3": { "name": "punctuation.definition.attribute.begin.wgsl" }
+                    },
+                    "end": "\\)",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.definition.attribute.end.wgsl" }
+                    },
+                    "patterns": [
+                        { "include": "#root" }
+                    ]
+                },
+                {
+                    "name": "meta.attribute.wgsl",
+                    "match": "(@)\\s*([_\\p{XID_Start}][\\p{XID_Continue}]*)\\b(?!\\s*\\()",
+                    "captures": {
+                        "1": { "name": "punctuation.definition.attribute.wgsl" },
+                        "2": { "name": "entity.name.function.wgsl" }
+                    }
+                }
+            ]
+        },
+
+        "item": {
+            "patterns": [
+                {
+                    "name": "meta.function.definition.wgsl",
+                    "begin": "\\bfn\\b",
+                    "beginCaptures": {
+                        "0": { "name": "keyword.other.wgsl" }
+                    },
+                    "end": "(?={|}|;|^\\s*$|=|,|\\b(?:if|else|for|while|loop|break|continue|continuing|switch|case|default|return|discard|const_assert|const|let|var|override|fn|struct|alias|enable|requires)\\b)",
+                    "patterns": [
+                        {
+                            "name": "meta.function.signature.wgsl",
+                            "begin": "\\b([_\\p{XID_Start}][\\p{XID_Continue}]*)\\s*(\\()",
+                            "beginCaptures": {
+                                "1": { "name": "entity.name.function.wgsl" },
+                                "2": { "name": "punctuation.definition.parameters.begin.wgsl" }
+                            },
+                            "end": "\\)",
+                            "endCaptures": {
+                                "0": { "name": "punctuation.definition.parameters.end.wgsl" }
+                            },
+                            "patterns": [
+                                { "include": "#root" }
+                            ]
+                        },
+                        {
+                            "name": "meta.function.return-type.wgsl",
+                            "begin": "->",
+                            "beginCaptures": {
+                                "0": { "name": "punctuation.definition.return-type.wgsl" }
+                            },
+                            "end": "(?={|}|;|^\\s*$|=|,|\\b(?:if|else|for|while|loop|break|continue|continuing|switch|case|default|return|discard|const_assert|const|let|var|override|fn|struct|alias|enable|requires)\\b)",
+                            "patterns": [
+                                { "include": "#type" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "meta.struct.definition.wgsl",
+                    "match": "\\b(struct)\\s+([_\\p{XID_Start}][\\p{XID_Continue}]*)\\b",
+                    "captures": {
+                        "1": { "name": "keyword.other.wgsl" },
+                        "2": { "name": "entity.name.type.wgsl" }
+                    }
+                },
+                {
+                    "name": "meta.typealias.definition.wgsl",
+                    "begin": "\\balias\\b",
+                    "beginCaptures": {
+                        "0": { "name": "keyword.other.wgsl" }
+                    },
+                    "end": "(;)|(?={|}|^\\s*$|,|\\b(?:if|else|for|while|loop|break|continue|continuing|switch|case|default|return|discard|const_assert|const|let|var|override|fn|struct|alias|enable|requires)\\b)",
+                    "endCaptures": {
+                        "1": { "name": "punctuation.terminator.wgsl" }
+                    },
+                    "patterns": [
+                        { "include": "#type" }
+                    ]
+                },
+                {
+                    "name": "meta.variable.definition.wgsl",
+                    "begin": "\\b(var)\\s*(<)",
+                    "beginCaptures": {
+                        "1": { "name": "keyword.other.wgsl" },
+                        "2": { "name": "punctuation.definition.typeparameters.begin.wgsl" }
+                    },
+                    "end": "(>)",
+                    "endCaptures": {
+                        "1": { "name": "punctuation.definition.typeparameters.end.wgsl" }
+                    },
+                    "patterns": [
+                        {
+                            "name": "keyword.other.wgsl",
+                            "match": "\\b(?:function|private|workgroup|uniform|storage|read|write|read_write)\\b"
+                        },
+                        { "include": "#root" }
+                    ]
+                },
+                {
+                    "name": "meta.constant.definition.wgsl",
+                    "match": "\\b(const)\\s+([_\\p{XID_Start}][\\p{XID_Continue}]*)\\b",
+                    "captures": {
+                        "1": { "name": "keyword.other.wgsl" },
+                        "2": { "name": "variable.other.constant.wgsl" }
+                    }
+                }
+            ]
+        },
+
+        "block": {
+            "name": "meta.block.wgsl",
+            "begin": "{",
+            "beginCaptures": {
+                "0": { "name": "punctuation.definition.block.begin.wgsl" }
+            },
+            "end": "}",
+            "endCaptures": {
+                "0": { "name": "punctuation.definition.block.end.wgsl" }
+            },
+            "patterns": [
+                { "include": "#root" }
+            ]
+        },
+
+        "type-annotation": {
+            "name": "meta.type.wgsl",
+            "begin": ":",
+            "beginCaptures": {
+                "0": { "name": "punctuation.definition.type.wgsl" }
+            },
+            "end": "(?={|}|;|^\\s*$|=|,|\\b(?:if|else|for|while|loop|break|continue|continuing|switch|case|default|return|discard|const_assert|const|let|var|override|fn|struct|alias|enable|requires)\\b)",
+            "patterns": [
+                { "include": "#type" }
+            ]
+        },
+
+        "keyword": {
+            "patterns": [
+                {
+                    "name": "keyword.control.wgsl",
+                    "match": "\\b(?:if|else|for|while|loop|break|continue|continuing|switch|case|default|return|discard|const_assert)\\b"
+                },
+                {
+                    "name": "keyword.other.wgsl",
+                    "match": "\\b(?:const|let|var|override|fn|struct|alias)\\b"
+                },
+                {
+                    "name": "keyword.directive.wgsl",
+                    "match": "\\b(?:enable|requires)\\b"
+                }
+            ]
+        },
+
+        "identifier": {
+            "patterns": [
+                {
+                    "name": "entity.name.type.scalar.wgsl",
+                    "match": "\\b(?:bool|f16|f32|i32|u32)\\b(?=\\s*\\()"
+                },
+                {
+                    "name": "meta.type.builtin.wgsl",
+                    "begin": "\\b(vec[234][uifh]?|mat[234]x[234][fh]?|array)\\s*(<)",
+                    "beginCaptures": {
+                        "1": { "name": "entity.name.type.builtin.wgsl" },
+                        "2": { "name": "punctuation.definition.typeparameters.begin.wgsl" }
+                    },
+                    "end": "(>)",
+                    "endCaptures": {
+                        "0": { "name": "punctuation.definition.typeparameters.end.wgsl" }
+                    },
+                    "patterns": [
+                        { "include": "#type" }
+                    ]
+                },
+                {
+                    "name": "entity.name.type.builtin.wgsl",
+                    "match": "\\b(?:vec[234][uifh]?|mat[234]x[234][fh]?|array)\\b(?=\\s*\\()"
+                },
+                {
+                    "name": "entity.name.type.wgsl",
+                    "match": "\\b[A-Z][\\p{XID_Continue}]*\\b(?=\\s*\\()"
+                },
+                {
+                    "name": "entity.name.function.wgsl",
+                    "match": "\\b[_\\p{XID_Start}][\\p{XID_Continue}]*\\b(?=\\s*\\()"
+                },
+                {
+                    "name": "variable.other.readwrite.wgsl",
+                    "match": "\\b[_\\p{XID_Start}][\\p{XID_Continue}]*\\b"
+                }
+            ]
+        },
+
+        "type": {
+            "patterns": [
+                { "include": "#comment" },
+                { "include": "#literal" },
+                { "include": "#attribute" },
+                { "include": "#item" },
+                { "include": "#block" },
+                { "include": "#keyword" },
+                {
+                    "name": "entity.name.type.scalar.wgsl",
+                    "match": "\\b(?:bool|f16|f32|i32|u32)\\b"
+                },
+                {
+                    "name": "keyword.other.builtin.wgsl",
+                    "match": "\\b(?:function|private|workgroup|uniform|storage)\\b"
+                },
+                {
+                    "name": "entity.name.type.wgsl",
+                    "match": "\\b[_\\p{XID_Start}][\\p{XID_Continue}]*\\b"
+                },
+                {
+                    "name": "meta.type.parameters.wgsl",
+                    "begin": "(\\<)",
+                    "beginCaptures": {
+                        "1": { "name": "punctuation.definition.typeparameters.begin.wgsl" }
+                    },
+                    "end": "(\\>)",
+                    "endCaptures": {
+                        "1": { "name": "punctuation.definition.typeparameters.end.wgsl" }
+                    },
+                    "patterns": [
+                        { "include": "#type" }
+                    ]
+                }
+            ]
+        }
+    }
+}
